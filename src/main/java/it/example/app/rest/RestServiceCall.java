@@ -29,6 +29,7 @@ public class RestServiceCall {
 	
 	public void init() {
 	
+		// As logging request and response solution, we can configure interceptors for RestTemplate.
 		this.restTemplate = new RestTemplate();
 		this.restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());;
 		
