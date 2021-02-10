@@ -12,6 +12,9 @@ mvn spring-boot:run
 - Logging
 https://laptrinhx.com/spring-resttemplate-request-response-logging-1959597283/
 
+- Logging Incoming request
+https://www.baeldung.com/spring-http-logging
+
 - GetForObject
 https://www.concretepage.com/spring-5/spring-resttemplate-getforobject
 
