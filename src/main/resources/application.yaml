@@ -1,4 +1,12 @@
-logging:
-  level:
-    org.apache.http: DEBUG
-    httpclient.wire: DEBUG
+    
+test:
+  service:
+    parametri:
+      url: http://localhost:7001/solarSystem/planets/{planet}/moons/{moon}
+    api:
+      key: abcdef12345
+      
+soundapp:
+  service:
+    parametri: 
+      url: http://api.soundapp.it/rest/hello/json

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 
+	  ********************************	
+	  TEST SERVICE  localhost:7001
+	  ********************************
+	-->
+
+	<bean id="TestService"
+		class="it.example.app.executors.TestService"
+		scope="singleton">
+		<property name="businessAssembler" ref="TestServiceBAssembler" />
+		<property name="baseUrl" value="${test.service.parametri.url}" />
+		<property name="xApiKey" value="${test.service.api.key}" />
+		<property name="isVerbose" value="true" />
+	</bean>
+	
+	<bean id="TestServiceBAssembler"
+		  class="it.example.app.mappers.TestServiceBAssembler">
+		  <property name="version" value="1.0.0" />
+	</bean>
+
+	<!-- 
+	  ********************************
+	  SOUNDAPP SERVICE online info
+	  ********************************
+	 -->
+
+	<bean id="SoundappService"
+		class="it.example.app.executors.SoundappService"
+		scope="singleton">
+		<property name="businessAssembler" ref="SoundappServiceBAssembler" />
+		<property name="baseUrl" value="${soundapp.service.parametri.url}" />
+		<property name="isVerbose" value="true" />
+	</bean>
+	
+	<bean id="SoundappServiceBAssembler"
+		  class="it.example.app.mappers.SoundappServiceBAssembler">
+		  <property name="version" value="1.2.3" />
+	</bean>	
+
+</beans>

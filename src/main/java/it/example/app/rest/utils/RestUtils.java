@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.example.app.modelbean.Planet;
+import it.example.app.modelbean.planet.Planet;
 
 public class RestUtils {
 

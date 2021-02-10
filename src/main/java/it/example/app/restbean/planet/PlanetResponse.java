@@ -1,5 +1,4 @@
-package it.example.app.restbean;
-
+package it.example.app.restbean.planet;
 
 public class PlanetResponse {
 

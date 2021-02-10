@@ -32,12 +32,12 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
     }
     
     private void traceRequest(HttpRequest request, byte[] body) throws IOException {
-        log.info("===========================request begin================================================");
+        log.info("===========================external request begin================================================");
         log.debug("URI         : {}", request.getURI());
         log.debug("Method      : {}", request.getMethod());
         log.debug("Headers     : {}", request.getHeaders() );
         log.debug("Request body: {}", new String(body, "UTF-8"));
-        log.info("==========================request end================================================");
+        log.info("==========================external request end================================================");
     }
 
     private void traceResponse(ClientHttpResponse response) throws IOException {
@@ -52,12 +52,12 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
             line = bufferedReader.readLine();
         }
         
-        log.info("============================response begin==========================================");
+        log.info("============================external response begin==========================================");
         log.debug("Status code  : {}", response.getStatusCode());
         log.debug("Status text  : {}", response.getStatusText());
         log.debug("Headers      : {}", response.getHeaders());
         log.debug("Response body: {}", inputStringBuilder.toString());
-        log.info("=======================response end=================================================");
+        log.info("=======================external response end=================================================");
     }
     
 }

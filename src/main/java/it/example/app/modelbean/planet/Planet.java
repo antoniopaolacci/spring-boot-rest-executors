@@ -1,4 +1,4 @@
-package it.example.app.modelbean;
+package it.example.app.modelbean.planet;
 
 public class Planet {
 

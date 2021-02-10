@@ -18,8 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import it.example.app.rest.interceptor.LoggingInterceptor;
-import it.example.app.restbean.PlanetRequest;
-import it.example.app.restbean.PlanetResponse;
+import it.example.app.restbean.planet.PlanetRequest;
+import it.example.app.restbean.planet.PlanetResponse;
 
 public class RestServiceCall {
 	
