@@ -1,5 +1,7 @@
-package it.example.app.mappers;
+package it.example.app.mappers.bassemplers;
 
+import it.example.app.mappers.AbstractBusinessAssemblerGenerics;
+import it.example.app.mappers.IBusinessAssemblerGenerics;
 import it.example.app.modelbean.planet.Planet;
 import it.example.app.restbean.planet.PlanetRequest;
 import it.example.app.restbean.planet.PlanetResponse;

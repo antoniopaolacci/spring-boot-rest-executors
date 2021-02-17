@@ -6,13 +6,13 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!-- 
-	  ********************************	
-	  TEST SERVICE  localhost:7001
-	  ********************************
+		  ********************************	
+		  TEST SERVICE REST localhost:7001
+		  ********************************
 	-->
 
 	<bean id="TestService"
-		class="it.example.app.executors.TestService"
+		class="it.example.app.executors.services.TestService"
 		scope="singleton">
 		<property name="businessAssembler" ref="TestServiceBAssembler" />
 		<property name="baseUrl" value="${test.service.parametri.url}" />
@@ -21,27 +21,46 @@
 	</bean>
 	
 	<bean id="TestServiceBAssembler"
-		  class="it.example.app.mappers.TestServiceBAssembler">
-		  <property name="version" value="1.0.0" />
+		  class="it.example.app.mappers.bassemplers.TestServiceBAssembler">
+		  <property name="version" value="1.2.3" />
 	</bean>
 
 	<!-- 
-	  ********************************
-	  SOUNDAPP SERVICE online info
-	  ********************************
+		  ********************************
+		  SOUNDAPP SERVICE REST online info
+		  ********************************
 	 -->
 
-	<bean id="SoundappService"
-		class="it.example.app.executors.SoundappService"
+	<bean id="HelloSoundappService"
+		class="it.example.app.executors.services.HelloSoundappService"
 		scope="singleton">
-		<property name="businessAssembler" ref="SoundappServiceBAssembler" />
-		<property name="baseUrl" value="${soundapp.service.parametri.url}" />
+		<property name="businessAssembler" ref="HelloSoundappServiceBAssembler" />
+		<property name="baseUrl" value="${infosoundapp.service.parametri.url}" />
 		<property name="isVerbose" value="true" />
 	</bean>
 	
-	<bean id="SoundappServiceBAssembler"
-		  class="it.example.app.mappers.SoundappServiceBAssembler">
-		  <property name="version" value="1.2.3" />
+	<bean id="HelloSoundappServiceBAssembler"
+		  class="it.example.app.mappers.bassemplers.HelloSoundappServiceBAssembler">
+		  <property name="version" value="1.0.0" />
+	</bean>	
+	
+		<!-- 
+			  ********************************
+			  SOUNDAPP SERVICE REST statistics
+			  ********************************
+	 	-->
+
+	<bean id="StatsSoundappService"
+		class="it.example.app.executors.services.StatsSoundappService"
+		scope="singleton">
+		<property name="businessAssembler" ref="StatsSoundappServiceBAssembler" />
+		<property name="baseUrl" value="${statssoundapp.service.parametri.url}" />
+		<property name="isVerbose" value="true" />
+	</bean>
+	
+	<bean id="StatsSoundappServiceBAssembler"
+		  class="it.example.app.mappers.bassemplers.StatsSoundappServiceBAssembler">
+		  <property name="version" value="1.0.0" />
 	</bean>	
 
 </beans>

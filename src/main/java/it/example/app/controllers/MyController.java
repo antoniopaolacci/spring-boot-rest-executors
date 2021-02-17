@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 
-import it.example.app.executors.SoundappService;
-import it.example.app.executors.TestService;
+import it.example.app.executors.services.HelloSoundappService;
+import it.example.app.executors.services.StatsSoundappService;
+import it.example.app.executors.services.TestService;
 import it.example.app.modelbean.planet.Planet;
-import it.example.app.modelbean.soundapp.SoundappInfo;
+import it.example.app.modelbean.soundapp.HelloSoundappInfo;
+import it.example.app.modelbean.soundapp.StatsSoundappInfo;
+import it.example.app.rest.exceptions.RestServiceCallException;
 
 @RestController
 public class MyController extends AbstractRequestLoggingFilter {
@@ -23,10 +26,13 @@ public class MyController extends AbstractRequestLoggingFilter {
 	TestService myRestService;
 	
 	@Autowired
-	SoundappService soundappService;
+	HelloSoundappService helloSoundappService;
+	
+	@Autowired
+	StatsSoundappService statsSoundappService;
 	 
 	@RequestMapping("/")
-	public Planet index() throws Throwable {
+	public Planet index() throws RestServiceCallException {
 		
 		logger.info("MyController / invoked.");
 		
@@ -41,30 +47,47 @@ public class MyController extends AbstractRequestLoggingFilter {
 		
 	}
 	
-	@RequestMapping("/soundapp")
-	public SoundappInfo infoSoundapp() throws Throwable {
+	@RequestMapping("/info-soundapp")
+	public HelloSoundappInfo infoSoundapp() throws RestServiceCallException {
 		
-		logger.info("MyController /soundapp invoked.");
+		logger.info("MyController /info-soundapp invoked.");
 		
-		SoundappInfo soundappInfo = new SoundappInfo();
+		HelloSoundappInfo helloSoundappInfo = new HelloSoundappInfo();
 		
-		soundappInfo = soundappService.doService(soundappInfo);
+		helloSoundappInfo = helloSoundappService.doService(helloSoundappInfo);
 			
-		return soundappInfo;
+		return helloSoundappInfo;
+		
+	}
+	
+	@RequestMapping("/stats-soundapp")
+	public StatsSoundappInfo statsSoundapp() throws RestServiceCallException {
+		
+		logger.info("MyController /stats-soundapp invoked.");
+		
+		StatsSoundappInfo statsSoundappInfo = new StatsSoundappInfo();
+		
+		statsSoundappInfo = statsSoundappService.doService(statsSoundappInfo);
+			
+		return statsSoundappInfo;
 		
 	}
 
 	@Override
 	protected void afterRequest(HttpServletRequest request, String message) {
-		logger.info(message);	
+		logger.info("===========================INBOUND response begin================================================");
+		logger.debug("URI         : {}", request.getRequestURI());
+		logger.debug("Method      : {}", request.getMethod());
+		logger.info("==========================INBOUND response end================================================");
+		logger.info(message);		
 	}
 
 	@Override
 	protected void beforeRequest(HttpServletRequest request, String message) {
-		logger.info("===========================INPUT request begin================================================");
+		logger.info("===========================INBOUND request begin================================================");
 		logger.debug("URI         : {}", request.getRequestURI());
 		logger.debug("Method      : {}", request.getMethod());
-		logger.info("==========================INPUT request end================================================");
+		logger.info("==========================INBOUND request end================================================");
 		logger.info(message);	
 	}
 

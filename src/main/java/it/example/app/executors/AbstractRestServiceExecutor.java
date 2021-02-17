@@ -18,13 +18,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.example.app.mappers.IBusinessAssemblerGenerics;
-import it.example.app.rest.interceptor.LoggingInterceptor;
+import it.example.app.rest.exceptions.RestServiceCallException;
+import it.example.app.rest.interceptors.LoggingInterceptor;
 
 /**
  *
@@ -71,46 +74,66 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 			interceptors.add(new LoggingInterceptor());	
 			this.restTemplate.setInterceptors(interceptors);
 			
-			log.info("Initialized AbstractRestServiceExecutor."); 
+			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();        
+			
+			//Add the Jackson Message converter
+			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+
+			// Note: here we are making this converter to process any kind of response, 
+			// not only application/*json, which is the default behaviour 
+			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));        
+			messageConverters.add(converter);  
+			this.restTemplate.setMessageConverters(messageConverters); 
+			
+			log.info("Initialized AbstractRestServiceExecutor with interceptors and message converters."); 
 			
 	}
 	
 	// Metodo richiamato dal controller per eseguire la chiamata al servizio 
 
-	public T2 doService(T1 t1) throws Throwable {
+	public T2 doService(T1 t1) throws RestServiceCallException {
 
 		log.info("Inside doService "+t1.toString());
 		log.info("businessAssembler "+businessAssembler.toString());
 		
 		long timeStart = Calendar.getInstance().getTimeInMillis();
 
-		// ModelBean Input to Service Request
-		T3 t3 = this.businessAssembler.doInputMapping(t1);
-
-		Map<String, String> uriParams = beanToMap(this.businessAssembler.doInputMappingUriMap(t1));
-
-		// Create HttpHeaders
-		HttpHeaders requestHeaders = createHttpHeader();
+		T2 t2;
 		
-		// Create HttpEntity request
-		HttpEntity<?> request = new HttpEntity<Object>(t3, requestHeaders);;
+		try {
 		
-		timeStart = Calendar.getInstance().getTimeInMillis();
+				// ModelBean Input to Service Request
+				T3 t3 = this.businessAssembler.doInputMapping(t1);
+		
+				Map<String, String> uriParams = beanToMap(this.businessAssembler.doInputMappingUriMap(t1));
+		
+				// Create HttpHeaders
+				HttpHeaders requestHeaders = createHttpHeader();
+				
+				// Create HttpEntity request
+				HttpEntity<?> request = new HttpEntity<Object>(t3, requestHeaders);;
+				
+				timeStart = Calendar.getInstance().getTimeInMillis();
+		
+				log.info(this.baseUrl + " ClassName=" +this.getClass().getCanonicalName() + " INIT Rest Service Call");
+		
+				// Call to service
+				T4 t4 = this.callOperation(request, uriParams);
+		
+				long timeEnd = Calendar.getInstance().getTimeInMillis();
+		
+				log.info(this.baseUrl, " ClassName=" + this.getClass().getCanonicalName(), " END Rest Service Call (elapsed time = " + Long.toString(timeEnd - timeStart) + ")");
+		
+				// Service Request to ModelBean Output
+				t2 = this.businessAssembler.doOutputMapping(t4);
 
-		log.info(this.baseUrl + " ClassName=" +this.getClass().getCanonicalName() + " INIT Rest Service Call");
-
-		// Call to service
-		T4 t4 = this.callOperation(request, uriParams);
-
-		long timeEnd = Calendar.getInstance().getTimeInMillis();
-
-		log.info(this.baseUrl, " ClassName=" + this.getClass().getCanonicalName(), " END Rest Service Call (elapsed time = " + Long.toString(timeEnd - timeStart) + ")");
-
-		// Service Request to ModelBean Output
-		T2 t2 = this.businessAssembler.doOutputMapping(t4);
-
+		} catch (Throwable e) {
+			
+			throw new RestServiceCallException(e);
+		}
+		
 		return t2;
-
+		
 	}
 
 	public String getxApiKey() {
@@ -200,5 +223,7 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 		return endPoint.endsWith("&") ? StringUtils.substring(endPoint, 0, endPoint.length()-1) : endPoint;	 
 
 	}
+	
+	
 
 }

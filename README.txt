@@ -1,15 +1,21 @@
 
+
+prerequisites:
+ - Java jdk8
+ - Maven 3.6.3
+
 # Import project on eclipse
 mvn eclipse:eclipse
 
-# Test
-mvn test
+# Build without Test
+mvn clean install -DskipTests
 
 # Run project
 mvn spring-boot:run
 
 # References:
-- Logging
+
+- Logging resttemplate
 https://laptrinhx.com/spring-resttemplate-request-response-logging-1959597283/
 
 - Logging Incoming request

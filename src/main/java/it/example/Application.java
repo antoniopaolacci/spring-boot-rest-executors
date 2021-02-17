@@ -35,7 +35,7 @@ public class Application {
 			
 			StringBuilder sb = new StringBuilder();
 			for (String beanName : beanNames) {
-				sb.append(beanName+" ");
+				sb.append(beanName+"\n");
 			}
 			
 			logger.info(sb.toString());
@@ -47,12 +47,14 @@ public class Application {
 	public CommonsRequestLoggingFilter requestLoggingFilter() {
 	    
 		CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
-	    loggingFilter.setIncludeClientInfo(true);
+	    
+		loggingFilter.setIncludeClientInfo(true);
 	    loggingFilter.setIncludeQueryString(true);
 	    loggingFilter.setIncludePayload(true);
 	    loggingFilter.setMaxPayloadLength(64000);
 	    
 	    return loggingFilter;
+	    
 	}
 	
 }

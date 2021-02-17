@@ -9,7 +9,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy/dd/MM HH:mm:ss,SSS} [%-5level] [%logger{36}] - %msg%n"/>
         </Console>
-        <File name="File" fileName="${log-path}/spring-boot-strategy-pattern.log">
+        <File name="File" fileName="${log-path}/spring-boot-rest-executors.log">
             <PatternLayout>
                 <Pattern>%d{yyyy/dd/MM HH:mm:ss,SSS} [%-5level] [%logger{36}] - %msg%n</Pattern>
             </PatternLayout>

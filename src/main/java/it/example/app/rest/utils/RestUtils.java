@@ -26,7 +26,7 @@ public class RestUtils {
 	}
 
 	
-	public static String getEndpointUriMap(Map<String,String> uriMap) {
+	public static String getEndpointUriMap(Map<String, String> uriMap) {
 
 		String endPoint = SERVICE_URL+"?";
 

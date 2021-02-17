@@ -1,3 +1,6 @@
+
+server:
+  port: 8091
     
 test:
   service:
@@ -6,7 +9,12 @@ test:
     api:
       key: abcdef12345
       
-soundapp:
+info-soundapp:
   service:
     parametri: 
       url: http://api.soundapp.it/rest/hello/json
+      
+stats-soundapp:
+  service:
+    parametri: 
+      url: http://www.soundapp.it/stats

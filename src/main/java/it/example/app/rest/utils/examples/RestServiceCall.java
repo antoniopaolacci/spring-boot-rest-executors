@@ -1,4 +1,4 @@
-package it.example.app.rest;
+package it.example.app.rest.utils.examples;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import it.example.app.rest.interceptor.LoggingInterceptor;
+import it.example.app.rest.interceptors.LoggingInterceptor;
 import it.example.app.restbean.planet.PlanetRequest;
 import it.example.app.restbean.planet.PlanetResponse;
 
@@ -134,7 +134,6 @@ public class RestServiceCall {
 		return response.getBody();
 		
 	}
-	
 	
 	public static void main(String[] args) {
 		

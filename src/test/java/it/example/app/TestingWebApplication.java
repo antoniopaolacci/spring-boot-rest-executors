@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 import it.example.app.modelbean.planet.Planet;
 
 @SpringBootTest
-public class TestingWebApplicationTests {
+public class TestingWebApplication {
 
 	@Test
 	public void testNumberOne() {

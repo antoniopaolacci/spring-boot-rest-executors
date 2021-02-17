@@ -1,4 +1,4 @@
-package it.example.app.executors;
+package it.example.app.executors.services;
 
 import java.util.Map;
 
@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
+import it.example.app.executors.AbstractRestServiceExecutor;
 import it.example.app.modelbean.planet.Planet;
 import it.example.app.restbean.planet.PlanetRequest;
 import it.example.app.restbean.planet.PlanetResponse;

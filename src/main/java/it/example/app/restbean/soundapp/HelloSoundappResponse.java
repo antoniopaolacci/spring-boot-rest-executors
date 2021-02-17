@@ -1,15 +1,15 @@
-package it.example.app.modelbean.soundapp;
+package it.example.app.restbean.soundapp;
 
-public class SoundappInfo {
+public class HelloSoundappResponse {
 
 	private String summary;
 	private String description;
 
-	public SoundappInfo() {
+	public HelloSoundappResponse() {
 		super();
 	}
 
-	public SoundappInfo(String summary, String description) {
+	public HelloSoundappResponse(String summary, String description) {
 		super();
 		this.summary = summary;
 		this.description = description;
@@ -28,10 +28,10 @@ public class SoundappInfo {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "SoundappInfo [summary=" + summary + ", description=" + description + "]";
+		return "SoundappResponse [summary=" + summary + ", description=" + description + "]";
 	}
-
+	
 }
