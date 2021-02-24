@@ -26,9 +26,13 @@ public class BufferedLoggingInterceptor implements ClientHttpRequestInterceptor 
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         
     	int requestNumber = requestNumberSequence.incrementAndGet();
+    	
         logRequest(requestNumber, request, body);
+        
         ClientHttpResponse response = execution.execute(request, body);
+        
         response = new BufferedClientHttpResponse(response);
+        
         logResponse(requestNumber, response);
         
         return response;

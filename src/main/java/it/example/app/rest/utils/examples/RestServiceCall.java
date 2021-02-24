@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,6 +30,10 @@ public class RestServiceCall {
 	
 	private RestTemplate restTemplate;
 	
+	public RestServiceCall(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
 	public void init() {
 	
 		// As logging request and response solution, we can configure Interceptors 
@@ -144,9 +150,14 @@ public class RestServiceCall {
 	
 	public static void main(String[] args) {
 		
-		RestServiceCall restServiceCall = new RestServiceCall();
+		ApplicationContext context =  new ClassPathXmlApplicationContext("webconfig-beans.xml");
+
+	    RestTemplate restTemplate = (RestTemplate) context.getBean("HttpTestRestTemplate");  // BufferingRestTemplate or HttpTestRestTemplate
 		
-		restServiceCall.init();
+		RestServiceCall restServiceCall = new RestServiceCall(restTemplate);
+
+// Or you can initialize a RestServiceCall with different rest template
+//		restServiceCall.init();
 		
 		log.info("-------------- EXAMPLES doCallExchange --------------");
 		try {

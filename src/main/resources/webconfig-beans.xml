@@ -5,6 +5,46 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+
+	<!-- 
+	  ************************************	
+	  TEST REST TEMPLATE WITH LOGGING
+	  ************************************
+	-->
+
+    <bean id="HttpTestRestTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>               
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory" />
+        </constructor-arg>
+        <property name="interceptors">
+            <list>
+                <bean class="it.example.app.rest.interceptors.BufferedLoggingInterceptor" />
+            </list>
+        </property>
+    </bean>
+
+
+	<!-- 
+	  ************************************	
+	  BUFFERING REST TEMPLATE WITH LOGGING
+	  ************************************
+	-->
+
+	<bean id="BufferingRestTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg>
+			<bean class="org.springframework.http.client.BufferingClientHttpRequestFactory">
+				<constructor-arg>
+					<bean class="org.springframework.http.client.SimpleClientHttpRequestFactory" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<property name="interceptors">
+			<list>
+				<bean class="it.example.app.rest.interceptors.LoggingInterceptor" />
+			</list>
+		</property>
+	</bean>
+
 	<!-- 
 		  ********************************	
 		  TEST SERVICE REST localhost:7001

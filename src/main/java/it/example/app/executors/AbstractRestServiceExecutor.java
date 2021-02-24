@@ -12,6 +12,8 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -50,44 +52,48 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 
 	public String xApiKey; 		// Example of API KEY
 
+	@Autowired
+	@Qualifier("HttpTestRestTemplate")  // BufferingRestTemplate or HttpTestRestTemplate
 	protected RestTemplate restTemplate;
 	
 	// Indica se abilitato il log & tracing verboso
 	private Boolean isVerbose;
 
-	@PostConstruct 
-	private void init() {
-			
-		    log.info("Initializing AbstractRestServiceExecutor...");
-		
-			// As logging request and response solution, we can configure interceptors for RestTemplate.
-		    // For instance, if we want our interceptor to function as a request/response logger, 
-		    // then we need to read it twice – the first time by the interceptor and the second time by the client.
-		    // The default implementation allows us to read the response stream only once. To cater such specific scenarios, 
-		    // Spring provides a special class called BufferingClientHttpRequestFactory. 
-		    // As the name suggests, this class will buffer the request/response in JVM memory for multiple usage.
-			this.restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(
-												 new SimpleClientHttpRequestFactory())
-												 );
-			
-			List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();		
-			interceptors.add(new LoggingInterceptor());	
-			this.restTemplate.setInterceptors(interceptors);
-			
-			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();        
-			
-			//Add the Jackson Message converter
-			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-
-			// Note: here we are making this converter to process any kind of response, 
-			// not only application/*json, which is the default behaviour 
-			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));        
-			messageConverters.add(converter);  
-			this.restTemplate.setMessageConverters(messageConverters); 
-			
-			log.info("Initialized AbstractRestServiceExecutor with interceptors and message converters."); 
-			
-	}
+//  Or you can leveraging @PostConstruct to inizialize with different rest template	
+	
+//	@PostConstruct 
+//	private void init() {
+//			
+//		    log.info("Initializing AbstractRestServiceExecutor...");
+//		
+//			// As logging request and response solution, we can configure interceptors for RestTemplate.
+//		    // For instance, if we want our interceptor to function as a request/response logger, 
+//		    // then we need to read it twice – the first time by the interceptor and the second time by the client.
+//		    // The default implementation allows us to read the response stream only once. To cater such specific scenarios, 
+//		    // Spring provides a special class called BufferingClientHttpRequestFactory. 
+//		    // As the name suggests, this class will buffer the request/response in JVM memory for multiple usage.
+//			this.restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(
+//												 new SimpleClientHttpRequestFactory())
+//												 );
+//			
+//			List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();		
+//			interceptors.add(new LoggingInterceptor());	
+//			this.restTemplate.setInterceptors(interceptors);
+//			
+//			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();        
+//			
+//			//Add the Jackson Message converter
+//			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//
+//			// Note: here we are making this converter to process any kind of response, 
+//			// not only application/*json, which is the default behaviour 
+//			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));        
+//			messageConverters.add(converter);  
+//			this.restTemplate.setMessageConverters(messageConverters); 
+//			
+//			log.info("Initialized AbstractRestServiceExecutor with interceptors and message converters."); 
+//			
+//	}
 	
 	// Metodo richiamato dal controller per eseguire la chiamata al servizio 
 
