@@ -14,13 +14,15 @@ mvn spring-boot:run
 
 ## Test:
 http://localhost:8091/
+
 http://localhost:8091/info-soundapp
+
 http://localhost:8091/stats-soundapp
 
 
-## Swagger provides a utility jar that allows us to generate REST clients for various programming languages and multiple frameworks.
+### Swagger provides a utility jar that allows us to generate REST clients for various programming languages and multiple frameworks.
 
-### Windows:
+#### Windows:
 
 java -jar swagger-codegen-cli-2.4.18.jar generate ^
   -DhideGenerationTimestamp=true ^
@@ -35,7 +37,7 @@ java -jar swagger-codegen-cli-2.4.18.jar generate ^
   --library resttemplate ^
   -o spring-swagger-codegen-api-client
   
-### Unix:
+#### Unix:
 
 java -jar swagger-codegen-cli-2.4.18.jar generate /
   -DhideGenerationTimestamp=true /
