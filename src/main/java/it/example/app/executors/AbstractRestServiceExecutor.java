@@ -22,6 +22,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -97,7 +98,7 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 	
 	// Metodo richiamato dal controller per eseguire la chiamata al servizio 
 
-	public T2 doService(T1 t1) throws RestServiceCallException {
+	public T2 doService(T1 t1) {
 
 		log.info("Inside doService "+t1.toString());
 		log.info("businessAssembler "+businessAssembler.toString());
@@ -133,9 +134,25 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 				// Service Request to ModelBean Output
 				t2 = this.businessAssembler.doOutputMapping(t4);
 
-		} catch (Throwable e) {
+		} catch (HttpClientErrorException e) {
 			
-			throw new RestServiceCallException(e);
+			log.error("Error: ",e);
+		    
+			String responseBody = e.getResponseBodyAsString();
+		    String statusText = e.getStatusText();
+		    
+		    log.info("responseBody: " + responseBody + " statusText: " + statusText);
+		    
+			// Service Request to ModelBean Output
+			t2 = this.businessAssembler.doExceptionMapping();
+		    
+		} catch (RestServiceCallException e) {
+			
+			log.error("Error: ",e);
+			
+			// Service Request to ModelBean Output
+			t2 = this.businessAssembler.doExceptionMapping();
+			
 		}
 		
 		return t2;
@@ -158,7 +175,7 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 		this.isVerbose = isVerbose;
 	}
 
-	protected abstract T4 callOperation(HttpEntity<?>  requestEntity, Map<String, String> uriParams) throws Throwable;
+	protected abstract T4 callOperation(HttpEntity<?>  requestEntity, Map<String, String> uriParams) throws RestServiceCallException;
 
 
 	public IBusinessAssemblerGenerics<T1, T2, T3, T4> getBusinessAssembler() {
@@ -215,7 +232,7 @@ public abstract class AbstractRestServiceExecutor<T1, T2, T3, T4> {
 		return parameters;
 	}
 
-	public String getEndpointUriMap(Map<String,String> uriMap) {
+	protected String getEndpointUriMap(Map<String,String> uriMap) {
 
 		String endPoint = this.baseUrl+"?";
 

@@ -8,13 +8,14 @@ import org.springframework.http.HttpMethod;
 
 import it.example.app.executors.AbstractRestServiceExecutor;
 import it.example.app.modelbean.planet.Planet;
+import it.example.app.rest.exceptions.RestServiceCallException;
 import it.example.app.restbean.planet.PlanetRequest;
 import it.example.app.restbean.planet.PlanetResponse;
 
 public class TestService extends AbstractRestServiceExecutor<Planet, Planet, PlanetRequest, PlanetResponse> {
 
 	@Override
-	protected PlanetResponse callOperation(HttpEntity<?> requestEntity, Map<String, String> uriParams) throws Throwable {
+	protected PlanetResponse callOperation(HttpEntity<?> requestEntity, Map<String, String> uriParams) throws RestServiceCallException {
 		return this.restTemplate.exchange(getEndpointUriMap(uriParams), HttpMethod.GET, requestEntity, PlanetResponse.class, uriParams).getBody();
 	}
 

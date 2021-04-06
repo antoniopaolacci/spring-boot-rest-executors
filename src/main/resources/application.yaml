@@ -14,6 +14,11 @@ info-soundapp:
     parametri: 
       url: http://api.soundapp.it/rest/hello/json
       
+play-soundapp:
+  service:
+    parametri: 
+      url: http://api.soundapp.it/rest/app/song/playing
+
 stats-soundapp:
   service:
     parametri: 

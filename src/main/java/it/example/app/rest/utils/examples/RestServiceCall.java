@@ -2,6 +2,7 @@ package it.example.app.rest.utils.examples;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +14,27 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.example.app.rest.interceptors.BufferedLoggingInterceptor;
 import it.example.app.rest.interceptors.LoggingInterceptor;
 import it.example.app.restbean.planet.PlanetRequest;
 import it.example.app.restbean.planet.PlanetResponse;
+import it.example.app.restbean.soundapp.login.MyLoginBean;
+import it.example.app.restbean.soundapp.login.MyLoginBeanResponse;
+import it.example.app.restbean.soundapp.playing.MySongBean;
 
 public class RestServiceCall {
 	
@@ -49,6 +61,11 @@ public class RestServiceCall {
 		List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();		
 		interceptors.add(new BufferedLoggingInterceptor());	
 		this.restTemplate.setInterceptors(interceptors);
+		
+		
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+	    converter.setSupportedMediaTypes(Arrays.asList(new MediaType[]{ MediaType.APPLICATION_JSON, MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL }));
+	    restTemplate.setMessageConverters(Arrays.asList(converter, new FormHttpMessageConverter()));
 		
 	}
 	
@@ -85,12 +102,12 @@ public class RestServiceCall {
         uriVariables.put("id", "5080");
         uriVariables.put("b", "fromOrigin");
 		
-		URI targetUrl= UriComponentsBuilder.fromUriString(BASE_URL)    						   // Build the base link
-								    .path("/android/played/{id}/{b}/c")                        // Add path
-								    .queryParam("name", "John Snow")                           // Add one or more query params
-								    .buildAndExpand(uriVariables)                              // Build the URL and Expand path variable in URI
-								    .encode()                                                  // Encode any URI items that need to be encoded
-								    .toUri();                                                  // Convert to URI
+		URI targetUrl = UriComponentsBuilder.fromUriString(BASE_URL)    						   	   // Build the base host
+										    .path("/android/played/{id}/{b}/c")                        // Add path
+										    .queryParam("name", "John Snow")                           // Add one or more query params
+										    .buildAndExpand(uriVariables)                              // Build the URL and Expand path variable in URI
+										    .encode()                                                  // Encode any URI items that need to be encoded
+										    .toUri();                                                  // Convert to URI
 
 		//Resolved url: http://www.somehost.com/android/played/5080/fromOrigin/c?name=John%20Snow
 		PlanetResponse response = restTemplate.getForObject(targetUrl, PlanetResponse.class);
@@ -99,6 +116,21 @@ public class RestServiceCall {
 		
 		return response;
 		
+	}
+	
+	public MySongBean doCallGetForObject_3() {
+
+		log.info("Calling rest endpoint (doCallGetForObject_3)...");	
+
+		// call REST API: method GET, body empty, no Path/Query parameters
+		String MY_URL = "http://api.soundapp.it/rest/app/song/playing";
+
+		MySongBean response = restTemplate.getForObject(MY_URL, MySongBean.class);
+
+		log.info("Called rest endpoint. MySongBean: ["+response+"]");
+
+		return response;
+
 	}
 	
 	
@@ -148,16 +180,130 @@ public class RestServiceCall {
 		
 	}
 	
+	public PlanetResponse doCallExchange_UsedOnAbstractRestServiceExecutor() {
+		
+		log.info("Calling rest endpoint (doCallExchange)...");	
+		
+		// URL
+		String url = "http://localhost:7001/solarSystem/planets/{planet}/moons/{moon}?firstName={firstName}&lastName={lastName}";
+		
+		// add URI (URL) parameters
+		Map<String, String> uriVariables = new HashMap<String, String>();
+		uriVariables.put("planet", "Mars");
+		uriVariables.put("moon", "Phobos");
+		uriVariables.put("firstName", "Mark");
+		uriVariables.put("lastName", "Watney");
+		
+		
+		/* Add Request body (JSON)
+		 * 
+		 * {
+		 *	"traceId": "KASJ456789ABC78",
+		 *	"clientName": "standalone-client-app"
+		 * }
+		 * 
+		 */ 
+		PlanetRequest request = new PlanetRequest();
+		request.setClientName("standalone-client-app");
+		request.setTraceId("KASJ456789ABC78");
+		
+		HttpEntity<PlanetRequest> requestEntity = new HttpEntity<>(request);
+		
+		//Resolved URL: http://localhost:7001/solarSystem/planets/Mars/moons/Phobos?firstName=Mark&lastName=Watney
+		ResponseEntity<PlanetResponse> response = this.restTemplate.exchange(url, HttpMethod.GET, requestEntity, PlanetResponse.class, uriVariables);
+
+		log.info("Called rest endpoint. PlanetResponse: ["+response+"]");
+		
+		return response.getBody();
+		
+	}
+	
+	public void doCallPostForEntity() {
+
+		log.info("Calling rest endpoint (doCallPostForEntity)...");	
+
+		// call REST API: method GET, body empty, no Path/Query parameters
+		String MY_URL = "http://api.soundapp.it/rest/auth/login";
+
+		// create HTTP Entity request
+		
+		MyLoginBean myLoginBean = new MyLoginBean();
+		myLoginBean.setUsername("string");
+		myLoginBean.setPassword("string");
+		
+		// create JSON headers
+		HttpHeaders  headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<MyLoginBean> request = new HttpEntity<MyLoginBean>(myLoginBean, headers);
+		
+		ResponseEntity<MyLoginBeanResponse> responseEntity = restTemplate.postForEntity(MY_URL, request, MyLoginBeanResponse.class);
+		
+		log.info("MyLoginBeanResponse: "+responseEntity.getBody());
+		
+		MyLoginBeanResponse response = responseEntity.getBody();
+			
+		log.info("ID: ["+response.getUniqueID()+"] USER: ["+response.getFirstName()+" "+response.getLastName()+"]");
+				
+	}
+	
+	public void doCallStatsSoundapp() throws JsonMappingException, JsonProcessingException {
+
+		log.info("Calling rest endpoint (doCallStatsSoundapp)...");	
+
+		// call REST API: method GET, body empty, no Path/Query parameters
+		String MY_URL = "http://www.soundapp.it/stats";
+
+		ResponseEntity<String> responseEntity = restTemplate.getForEntity(MY_URL, String.class);
+		
+		log.info("Response: "+responseEntity.getBody());
+		/*
+		 * { 
+		 *   "count":"0",  
+		 *   "now":"",
+         *   "next":"", 
+         *   "previous": "Max Gazze - Il farmacista", 
+         *     "history": [
+	     *            {"title":"M?neskin - ZITTI E BUONI (Official Video - Sanremo 2021)"},
+	     *            {"title":"Max Gazz? - Il farmacista"},{"title":"Daniele Silvestri - Il mio nemico (videoclip)"},
+	     *            {"title":"Queen - Radio Ga Ga (Official Video)"},{"title":"Thomas Cheval - Acqua Minerale // Official Music Video"},
+	     *            {"title":"Brunori Sas - Secondo me"},{"title":"Irama - La genesi del tuo colore (Official Video) [Sanremo 2021]"},
+	     *            {"title":"MIKA - Popular Song ft. Ariana Grande"},{"title":"Willie Peyote - Mai Dire Mai (La Locura)"},
+	     *            {"title":"Mika - Elle Me Dit (clip officiel)"},{"title":"Baustelle - La guerra ? finita (Official Video)"},
+	     *            {"title":"MEGANOIDI  -  Zeta Reticoli  - Video Clip Ufficiale"},{"title":"Levante - Tikibombom (Home Version)"},
+	     *            {"title":"La Rappresentante di Lista - Amare (Official Video - Sanremo 2021)"}
+         *       ]}
+		 *
+		 */
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode actualObj = objectMapper.readTree(responseEntity.getBody());
+		
+		JsonNode jsonNode = actualObj.get("previous");
+		String title = jsonNode.textValue();
+
+		JsonNode arrNode =  actualObj.get("history");
+		if (arrNode.isArray()) {
+			for (final JsonNode objNode : arrNode) {
+				log.info(objNode.get("title").textValue());
+			}
+		}
+
+		log.info("PREV: "+title);
+	    
+	}
+	
+	
+	
 	public static void main(String[] args) {
 		
 		ApplicationContext context =  new ClassPathXmlApplicationContext("webconfig-beans.xml");
 
-	    RestTemplate restTemplate = (RestTemplate) context.getBean("HttpTestRestTemplate");  // BufferingRestTemplate or HttpTestRestTemplate
+	    RestTemplate restTemplate = (RestTemplate) context.getBean("HttpTestRestTemplate");  // or BufferingRestTemplate or HttpTestRestTemplate
 		
-		RestServiceCall restServiceCall = new RestServiceCall(restTemplate);
+		RestServiceCall restServiceCall = new RestServiceCall(restTemplate);  // or new RestTemplate()
 
-// Or you can initialize a RestServiceCall with different rest template
-//		restServiceCall.init();
+//		restServiceCall.init();  // or you can initialize a RestServiceCall with different RestTemplate programmatically 
 		
 		log.info("-------------- EXAMPLES doCallExchange --------------");
 		try {
@@ -176,6 +322,34 @@ public class RestServiceCall {
 		log.info("-------------- EXAMPLES doCallGetForObject_2 --------------");
 		try {
 			restServiceCall.doCallGetForObject_2();
+		} catch(Exception e) {
+			log.error("Error: ",e);
+		}
+		
+		log.info("-------------- EXAMPLES doCallGetForObject_3 --------------");
+		try {
+			restServiceCall.doCallGetForObject_3();
+		} catch(Exception e) {
+			log.error("Error: ",e);
+		}
+		
+		log.info("-------------- EXAMPLES doCallExchange_UsedOnAbstractRestServiceExecutor --------------");
+		try {
+			restServiceCall.doCallExchange_UsedOnAbstractRestServiceExecutor();
+		} catch(Exception e) {
+			log.error("Error: ",e);
+		}
+		
+		log.info("-------------- EXAMPLES doCallPostForEntity --------------");
+		try {
+			restServiceCall.doCallPostForEntity();
+		} catch(Exception e) {
+			log.error("Error: ",e);
+		}
+		
+		log.info("-------------- EXAMPLES doCallStatsSoundapp --------------");
+		try {
+			restServiceCall.doCallStatsSoundapp();
 		} catch(Exception e) {
 			log.error("Error: ",e);
 		}

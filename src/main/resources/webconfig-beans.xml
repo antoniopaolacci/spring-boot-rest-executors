@@ -8,7 +8,7 @@
 
 	<!-- 
 	  ************************************	
-	  TEST REST TEMPLATE WITH LOGGING
+	  APACHE HTTPCLIENT-BASED REST TEMPLATE WITH LOGGING
 	  ************************************
 	-->
 
@@ -21,8 +21,21 @@
                 <bean class="it.example.app.rest.interceptors.BufferedLoggingInterceptor" />
             </list>
         </property>
+        <property name="messageConverters">
+	        <list>
+	            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+	            	 <property name="writeAcceptCharset" value="false" />
+	            </bean>	 
+	            <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+			    <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+	            <bean class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	        </list>
+    	</property>
     </bean>
-
+    
 
 	<!-- 
 	  ************************************	
@@ -43,6 +56,16 @@
 				<bean class="it.example.app.rest.interceptors.LoggingInterceptor" />
 			</list>
 		</property>
+		 <property name="messageConverters">
+	        <list>
+	            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter"/>
+	            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+	        </list>
+    	</property>
 	</bean>
 
 	<!-- 
@@ -84,6 +107,25 @@
 		  <property name="version" value="1.0.0" />
 	</bean>	
 	
+		<!-- 
+			  ********************************
+			  SOUNDAPP SERVICE REST play now
+			  ********************************
+	 	-->
+
+	<bean id="PlaySoundappService"
+		class="it.example.app.executors.services.PlaySoundappService"
+		scope="singleton">
+		<property name="businessAssembler" ref="PlaySoundappServiceBAssembler" />
+		<property name="baseUrl" value="${playsoundapp.service.parametri.url}" />
+		<property name="isVerbose" value="true" />
+	</bean>
+	
+	<bean id="PlaySoundappServiceBAssembler"
+		  class="it.example.app.mappers.bassemplers.PlaySoundappServiceBAssembler">
+		  <property name="version" value="1.0.0" />
+	</bean>	
+
 		<!-- 
 			  ********************************
 			  SOUNDAPP SERVICE REST statistics

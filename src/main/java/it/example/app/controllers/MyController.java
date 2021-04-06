@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.AbstractRequestLoggingFilter;
 
 import it.example.app.executors.services.HelloSoundappService;
+import it.example.app.executors.services.PlaySoundappService;
 import it.example.app.executors.services.StatsSoundappService;
 import it.example.app.executors.services.TestService;
 import it.example.app.modelbean.planet.Planet;
 import it.example.app.modelbean.soundapp.HelloSoundappInfo;
-import it.example.app.modelbean.soundapp.StatsSoundappInfo;
+import it.example.app.modelbean.soundapp.PlaySoundappInfo;
+import it.example.app.modelbean.soundapp.StatisticSoundappInfo;
 import it.example.app.rest.exceptions.RestServiceCallException;
 
 @RestController
@@ -27,6 +29,9 @@ public class MyController extends AbstractRequestLoggingFilter {
 	
 	@Autowired
 	HelloSoundappService helloSoundappService;
+	
+	@Autowired
+	PlaySoundappService playSoundappService;
 	
 	@Autowired
 	StatsSoundappService statsSoundappService;
@@ -60,16 +65,29 @@ public class MyController extends AbstractRequestLoggingFilter {
 		
 	}
 	
-	@RequestMapping("/stats-soundapp")
-	public StatsSoundappInfo statsSoundapp() throws RestServiceCallException {
+	@RequestMapping("/playing-soundapp")
+	public PlaySoundappInfo playSoundapp() throws RestServiceCallException {
 		
-		logger.info("MyController /stats-soundapp invoked.");
+		logger.info("MyController /playing-soundapp invoked.");
 		
-		StatsSoundappInfo statsSoundappInfo = new StatsSoundappInfo();
+		PlaySoundappInfo playSoundappInfo = new PlaySoundappInfo();
 		
-		statsSoundappInfo = statsSoundappService.doService(statsSoundappInfo);
+		playSoundappInfo = playSoundappService.doService(playSoundappInfo);
 			
-		return statsSoundappInfo;
+		return playSoundappInfo;
+		
+	}
+	
+	@RequestMapping("/statistic-soundapp")
+	public StatisticSoundappInfo statsSoundapp() throws RestServiceCallException {
+		
+		logger.info("MyController /statistic-soundapp invoked.");
+		
+		StatisticSoundappInfo statisticSoundappInfo = new StatisticSoundappInfo();
+		
+		statisticSoundappInfo = statsSoundappService.doService(statisticSoundappInfo);
+			
+		return statisticSoundappInfo;
 		
 	}
 

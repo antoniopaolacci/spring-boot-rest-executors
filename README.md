@@ -14,12 +14,12 @@ mvn spring-boot:run
 
 ## Test:
 
-| Endpoint REST | Backend call |
-| --- | --- |
-| http://localhost:8091/ | GET http://localhost:7001/solarSystem/planets/Sole/moons/fakeMoonValue |
-| http://localhost:8091/info-soundapp | GET http://api.soundapp.it/rest/hello/json |
-| http://localhost:8091/playing-soundapp | GET http://api.soundapp.it/rest/app/song/playing |
-| http://localhost:8091/stats-soundapp | GET http://www.soundapp.it/stats |
+| Endpoint REST | Backend call | Body JSON | 
+| --- | --- | --- |
+| http://localhost:8091/ | GET GET http://localhost:7001/solarSystem/planets/Sole/moons/fakeMoonValue?firstName=value1&lastName=value2 | {"traceId":"123","clientName":"TEST"} | 
+| http://localhost:8091/info-soundapp | GET http://api.soundapp.it/rest/hello/json | | 
+| http://localhost:8091/playing-soundapp | GET http://api.soundapp.it/rest/app/song/playing | | 
+| http://localhost:8091/statistic-soundapp | GET http://www.soundapp.it/stats | | 
 
 ### Swagger provides a utility jar that allows us to generate REST clients for various programming languages and multiple frameworks.
 

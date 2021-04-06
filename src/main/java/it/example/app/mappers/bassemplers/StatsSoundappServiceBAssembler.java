@@ -1,35 +1,73 @@
 package it.example.app.mappers.bassemplers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.example.app.mappers.AbstractBusinessAssemblerGenerics;
 import it.example.app.mappers.IBusinessAssemblerGenerics;
-import it.example.app.modelbean.soundapp.StatsSoundappInfo;
-import it.example.app.restbean.soundapp.StatsSoundappRequest;
-import it.example.app.restbean.soundapp.StatsSoundappResponse;
+import it.example.app.modelbean.soundapp.StatisticSoundappInfo;
+import it.example.app.rest.exceptions.RestServiceCallException;
+import it.example.app.restbean.soundapp.stats.StatsSoundappRequest;
 
-public class StatsSoundappServiceBAssembler extends AbstractBusinessAssemblerGenerics<StatsSoundappInfo, StatsSoundappInfo, StatsSoundappRequest, StatsSoundappResponse> implements IBusinessAssemblerGenerics<StatsSoundappInfo, StatsSoundappInfo, StatsSoundappRequest, StatsSoundappResponse> {
 
-	@Override
-	public StatsSoundappRequest doInputMapping(StatsSoundappInfo sourceBean) throws Throwable {
-		return null;
-	}
+public class StatsSoundappServiceBAssembler extends AbstractBusinessAssemblerGenerics<StatisticSoundappInfo, StatisticSoundappInfo, StatsSoundappRequest, String> implements IBusinessAssemblerGenerics<StatisticSoundappInfo, StatisticSoundappInfo, StatsSoundappRequest, String> {
 
 	@Override
-	public Object doInputMappingUriMap(StatsSoundappInfo sourceBean) throws Throwable {
-		return null;
-	}
-
-	@Override
-	public StatsSoundappInfo doOutputMapping(StatsSoundappResponse response) throws Throwable {
-
-		StatsSoundappInfo statsSoundappInfo = new StatsSoundappInfo();
-
-		statsSoundappInfo.setNumSongEnqueued(response.getCount());
-		statsSoundappInfo.setNextSong(response.getNext());
-		statsSoundappInfo.setPreviousSong(response.getPrevious());
-		statsSoundappInfo.setHistoryPlayedSongs(response.getHistory());
+	public StatsSoundappRequest doInputMapping(StatisticSoundappInfo sourceBean) throws RestServiceCallException {
 		
-		return statsSoundappInfo;
+		StatsSoundappRequest request = new StatsSoundappRequest();
+		return request;
+		
+	}
 
+	@Override
+	public Object doInputMappingUriMap(StatisticSoundappInfo sourceBean) throws RestServiceCallException {
+
+		// Path params
+		// nothing to do
+		
+		// Query params
+		// nothing to do
+		
+		return null;
+		
+	}
+
+	@Override
+	public StatisticSoundappInfo doOutputMapping(String response) throws RestServiceCallException {
+		
+		StatisticSoundappInfo statisticSoundappInfo = new StatisticSoundappInfo();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode actualObj;
+	
+		try {
+
+			actualObj = objectMapper.readTree(response);
+			JsonNode jsonNode = actualObj.get("previous");
+			String previousTitle = jsonNode.textValue();
+			statisticSoundappInfo.setPrev(previousTitle);
+			
+			JsonNode arrNode =  actualObj.get("history");
+			if (arrNode.isArray()) {
+				for (JsonNode objNode : arrNode) {
+					statisticSoundappInfo.addHistoryItem(objNode.get("title").textValue());
+				}
+			}
+		
+		} catch (JsonProcessingException e) {
+			throw new RestServiceCallException(e);
+		}
+		
+		
+		return statisticSoundappInfo;
+
+	}
+
+	@Override
+	public StatisticSoundappInfo doExceptionMapping() {
+		return new StatisticSoundappInfo();
 	}
 
 }
