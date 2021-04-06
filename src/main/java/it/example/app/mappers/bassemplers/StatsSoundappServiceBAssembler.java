@@ -45,9 +45,18 @@ public class StatsSoundappServiceBAssembler extends AbstractBusinessAssemblerGen
 		try {
 
 			actualObj = objectMapper.readTree(response);
+			
 			JsonNode jsonNode = actualObj.get("previous");
 			String previousTitle = jsonNode.textValue();
 			statisticSoundappInfo.setPrev(previousTitle);
+			
+			JsonNode jsonNode_2 = actualObj.get("now");
+			String nowTitle = jsonNode_2.textValue();
+			statisticSoundappInfo.setNow(nowTitle);
+			
+			JsonNode jsonNode_3 = actualObj.get("next");
+			String nextTitle = jsonNode_3.textValue();
+			statisticSoundappInfo.setNext(nextTitle);
 			
 			JsonNode arrNode =  actualObj.get("history");
 			if (arrNode.isArray()) {
